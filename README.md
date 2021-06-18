@@ -1,4 +1,4 @@
-# Optimize Gif for Medium 
+# Gif Optimization for Medium Article (GOMA)
 
 ## Overview
 
@@ -30,13 +30,13 @@ sudo apt install gifsicle
 ## Usage
 
 ```sh
-ogfm input1.gif input2.gif input3.gif input4.gif 
+goma input1.gif input2.gif input3.gif input4.gif 
 
 # or
-ogfm ./*.gif
+goma ./*.gif
 
 # or
-ogfm ~/path/to/dir/*.gif
+goma ~/path/to/dir/*.gif
 ```
 
 ## Features
