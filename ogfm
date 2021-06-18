@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+
+#########
+# Author : Shinichi Okada
+# Optimize Gifs (optgif)
+#########
+
+version="0.0.1"
+script_name=$(basename "$0")
+tmp_dir="/tmp"
+PWD=$(pwd)
+
+# check gifsicle
+if ! command -v gifsicle >&/dev/null; then
+    echo "Please install gifsicle."
+    exit
+fi
+
+check_gif() {
+    # echo "checking $1"
+    filename=$1
+    ext=${filename##*\.}
+    if ! [[ $ext = gif && -f $filename ]]; then
+        echo "You must provide a gif file: $filename." >&2
+        exit 1
+    fi
+    return 0
+}
+
+merge() {
+    args=("$@")
+    # echo "${args[@]}"
+    #  merge files
+    gifsicle --colors 32 --merge "${args[@]}" -o "${tmp_dir}/merged.gif"
+}
+
+optimize() {
+    echo "Optimizing..."
+    # Get the number of frames
+    # POSIX way
+    numframes=$(gifsicle "${tmp_dir}/merged.gif" -I | grep -owc "image") || exit
+    # Regex not in BSD grep, only in GNU
+    # numframes=$(gifsicle "${tmp_dir}/$1" -I | grep -P "\d+ images" --only-matching | grep -P "\d+" --only-matching)
+    echo "There are $numframes frames."
+    # Deletion
+    gifsicle "$1" --colors 32 --resize-width 450 --unoptimize $(seq -f "#%g" 0 2 "$numframes") -O2 -o "${PWD}/optimized.gif" || exit
+
+    echo "Removed every second frames, resized to 450px width, and colors reduced to 32 colors."
+
+}
+
+usage() {
+    cat <<EOF
+Name: $script_name
+This script will take an animated GIFs and merge to one file and delete every other frame.
+
+Examples:
+    # Run
+    $script_name mygif1.gif mygif2.gif mygif3.gif mygif4.gif
+
+    # print this help
+    $script_name -h
+
+    # print version
+    $script_name -v
+EOF
+    exit
+}
+
+start() {
+    # echo "${GIFS[@]}"
+    # check if all are valid file names
+    for GIF in "${GIFS[@]}"; do
+        echo "Checking $GIF"
+        check_gif "$GIF"
+    done
+    # merge files
+    echo "Merging gifs..."
+    # merge "${GIFS[@]}"
+    merge "${GIFS[@]}"
+    # exit
+    echo "Merging completed."
+    echo "Optimizing it..."
+    optimize "${tmp_dir}/merged.gif"
+    echo "Optimization completed."
+    rm "${tmp_dir}/merged.gif"
+}
+
+fn_main() {
+    GIFS=()
+    while (($# > 0)); do
+        case $1 in
+        -v | --version)
+            echo $version
+            exit
+            ;;
+        -h | --help)
+            usage
+            exit
+            ;;
+        *)
+            GIFS+=("$1")
+            shift
+            ;;
+        esac
+    done
+    start
+}
+
+fn_main "$@"
