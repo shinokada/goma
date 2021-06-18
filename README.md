@@ -1,14 +1,11 @@
-# optgif 
+# Optimize Gif for Medium 
 
 ## Overview
 
-This script will take an animated GIFs and merge to one file and delete every other frame.
+This script will take an animated GIFs and merge to one file and optimize the Gif by deleting some frames to fit 25 MB.
 
 This resizes the width to 450px, colors to 32.
 
-This will optimize 100 MB of GIF to less than 8 MB.
-
-Original https://gist.github.com/aug2uag/7d19da924715792f4981
 
 ## Requirement
 
@@ -33,7 +30,13 @@ sudo apt install gifsicle
 ## Usage
 
 ```sh
-optgif input1.gif input2.gif input3.gif input4.gif 
+ogfm input1.gif input2.gif input3.gif input4.gif 
+
+# or
+ogfm ./*.gif
+
+# or
+ogfm ~/path/to/dir/*.gif
 ```
 
 ## Features
@@ -48,6 +51,10 @@ shellspec
 ## Author
 
 Shinichi Okada
+
+## Reference
+
+- https://gist.github.com/aug2uag/7d19da924715792f4981
 
 ## Licence
 

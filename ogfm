@@ -2,13 +2,14 @@
 
 #########
 # Author : Shinichi Okada
-# Optimize Gifs (optgif)
+# Optimize Gif For Medium (ogfm)
 #########
 
 version="0.0.1"
 script_name=$(basename "$0")
 tmp_dir="/tmp"
 PWD=$(pwd)
+max=25
 
 # check gifsicle
 if ! command -v gifsicle >&/dev/null; then
@@ -34,18 +35,74 @@ merge() {
     gifsicle --colors 32 --merge "${args[@]}" -o "${tmp_dir}/merged.gif"
 }
 
+size_check(){
+    wc -c "${tmp_dir}/merged.gif" | awk '{print $1}'
+}
+
+gifsicle_opt(){
+
+    gifsicle "$1" --colors 32 --resize-width 450 --unoptimize $(seq -f "#%g" 0 "$num" "$numframes") -O2 -o "${PWD}/optimized.gif" || exit
+}
+
+frames(){
+    gifsicle "${tmp_dir}/merged.gif" -I | grep -owc "image" || exit
+}
+
 optimize() {
-    echo "Optimizing..."
     # Get the number of frames
     # POSIX way
-    numframes=$(gifsicle "${tmp_dir}/merged.gif" -I | grep -owc "image") || exit
-    # Regex not in BSD grep, only in GNU
-    # numframes=$(gifsicle "${tmp_dir}/$1" -I | grep -P "\d+ images" --only-matching | grep -P "\d+" --only-matching)
-    echo "There are $numframes frames."
-    # Deletion
-    gifsicle "$1" --colors 32 --resize-width 450 --unoptimize $(seq -f "#%g" 0 2 "$numframes") -O2 -o "${PWD}/optimized.gif" || exit
+    numframes=$(frames) || exit
 
-    echo "Removed every second frames, resized to 450px width, and colors reduced to 32 colors."
+    echo "There are $numframes frames."
+
+    size=$(size_check)
+
+    # echo "$size"
+    # while ((size > 3700000)); do
+    # divider=2
+    # size=$(echo "$size"*0.5 | bc)
+    # size=${size/\.*/}
+    # done
+    # echo "after 1: $size"
+
+    # while ((size > 3300000));do
+    # divider=3
+    # size=$(echo "$size"*0.6666 | bc)
+    # size=${size/\.*/}
+    # done
+    # echo "after 2: $size"
+
+    # while ((size > 3100000));do
+    # divider=4
+    # size=$(echo "$size"*0.75 | bc)
+    # size=${size/\.*/}
+    # done
+    # echo "after 3: $size"
+
+    # while ((size > 2500000));do
+    # divider=5
+    # size=$(echo "$size"*0.8 | bc)
+    # size=${size/\.*/}
+    # done
+    # echo "after 4: $size"
+    if ((size > 37000000)); then 
+        num=2
+    elif ((size > 33000000)); then
+        num=3
+    elif ((size > 31000000)); then
+        num=4
+    else
+        num=5
+    fi
+
+    echo $num
+    exit
+  
+
+    # # Deletion
+    # gifsicle "$1" --colors 32 --resize-width 450 --unoptimize $(seq -f "#%g" 0 2 "$numframes") -O2 -o "${PWD}/optimized.gif" || exit
+
+    # echo "Removed every second frames, resized to 450px width, and colors reduced to 32 colors."
 
 }
 
@@ -78,7 +135,8 @@ start() {
     echo "Merging gifs..."
     # merge "${GIFS[@]}"
     merge "${GIFS[@]}"
-    # exit
+    
+    
     echo "Merging completed."
     echo "Optimizing it..."
     optimize "${tmp_dir}/merged.gif"
