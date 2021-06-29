@@ -1,5 +1,7 @@
 # Gif Optimization for Medium Article (GOMA)
 
+## [Warning] Work on progress
+
 ## Overview
 
 This script will take an animated GIFs and merge to one file and optimize the Gif by deleting some frames.
