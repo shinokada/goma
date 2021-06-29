@@ -43,7 +43,7 @@ gifsicle_opt(){
     cp "$1" "$2"
     num=$3
     numframes=$4
-    gifsicle "$1" --colors 32 --resize-width 450 --unoptimize $(seq -f "#%g" 0 "$num" "$numframes") -O2 -o "${PWD}/$2" 
+    gifsicle "$1" --colors 32 --resize-width 600 --unoptimize $(seq -f "#%g" 0 "$num" "$numframes") -O2 -o "${PWD}/$2" 
 }
 
 frames(){
@@ -58,7 +58,8 @@ optimize() {
     echo "There are $numframes frames."
 
     size=$(size_check)
-echo "test"
+    num=2
+
     numframes=$(frames)
     input="${tmp_dir}/merged.gif"
     output="final.gif"

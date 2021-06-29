@@ -2,9 +2,9 @@
 
 ## Overview
 
-This script will take an animated GIFs and merge to one file and optimize the Gif by deleting some frames to fit 25 MB.
+This script will take an animated GIFs and merge to one file and optimize the Gif by deleting some frames.
 
-This resizes the width to 450px, colors to 32.
+This resizes the width to 600px, colors to 32.
 
 
 ## Requirement
@@ -56,6 +56,6 @@ Shinichi Okada
 
 - https://gist.github.com/aug2uag/7d19da924715792f4981
 
-## Licence
+## License
 
-Please see license.txt.
+Please see LICENSE.

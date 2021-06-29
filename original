@@ -1,0 +1,20 @@
+#!/bin/bash
+# This script will take an animated GIF and delete every other frame
+# resize the width to 450px, colors to 32.
+# This will optimize 100 MB of GIF to less than 8 MB.
+# Accepts two parameters: input file and output file
+# Usage: ./<scriptfilename> input.gif output.gif
+# Original https://gist.github.com/aug2uag/7d19da924715792f4981
+
+# Make a copy of the file
+cp "$1" "$2"
+echo "copy completed"
+
+# Get the number of frames
+
+numframes=$(gifsicle "$1" -I | grep -P "\d+ images" --only-matching | grep -P "\d+" --only-matching)
+echo "There are $numframes frames."
+# Deletion
+gifsicle "$1" --colors 32 --resize-width 450 --unoptimize $(seq -f "#%g" 0 2 "$numframes") -O2 -o "$2"
+
+echo "Removed every second frames, resized to 450px width, and colors reduced to 32 colors."
